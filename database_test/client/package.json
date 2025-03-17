@@ -1,5 +1,5 @@
 {
-  "name": "database_test",
+  "name": "client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@xata.io/client": "^0.0.0-next.v93343b9646f57a1e5c51c35eccf0767c2bb80baa",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
