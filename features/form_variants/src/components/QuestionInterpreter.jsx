@@ -58,16 +58,16 @@ export function Carousel({ items, style }) {
                     zIndex: isCurrent ? 100 : isPrev || isNext ? 50 : 10,
                   }}
                   animate={{
-                    opacity: 1,
+                    opacity: isCurrent || isNext || isPrev ? 1 : 0,
                     x: isPrev ? -200 : isNext ? 200 : 0,
                     scale: isCurrent ? 1 : 0.8,
                     zIndex: isCurrent ? 100 : isPrev || isNext ? 50 : 10,
                   }}
                   exit={{
-                    zIndex: 1,
                     opacity: 0,
                     x: 0,
-                    scale: 0.8,
+                    scale: 0,
+                    zIndex: 0,
                   }}
                   transition={{
                     type: "spring",
@@ -109,17 +109,29 @@ export function Carousel({ items, style }) {
   );
 }
 
-export function getQuestionElements(opacityTransforms) {
+export function getSectionElements(opacityTransforms) {
   const questionElements = [
     <Section opacityTransform={opacityTransforms[0]}>
       <div className="flex flex-col gap-6 text-center w-[70vw]">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold w-full whitespace-nowrap overflow-hidden text-clip text-primary">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold w-full whitespace-nowrap overflow-x-auto overflow-y-hidden text-primary">
           {data.name}
         </h1>
-        <h2 className="text-lg md:text-xl lg:text-2xl mt-4 w-full whitespace-nowrap overflow-hidden text-ellipsis">
+        <h2 className="text-lg md:text-xl lg:text-2xl mt-4 w-full whitespace-nowrap overflow-auto">
           {data.subtitle}
         </h2>
         <Divider className="my-4" />
+        <Button
+          className="w-[15vw] min-w-[8rem] mx-auto font-bold"
+          color="primary"
+          onPress={() => {
+            window.scrollTo({
+              top: document.documentElement.scrollHeight,
+              behavior: "smooth",
+            });
+          }}
+        >
+          Start
+        </Button>
       </div>
     </Section>,
   ];
@@ -143,11 +155,8 @@ export function getQuestionElements(opacityTransforms) {
           <QuestionCard
             title={question.title}
             description={question.description}
-          >
-            <p className="text-red-600 font-bold p-4">
-              Unknown Type of Question
-            </p>
-          </QuestionCard>
+            isUToQ={true}
+          />
         );
     }
   });

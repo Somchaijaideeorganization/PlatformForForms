@@ -18,7 +18,7 @@
     {
       "title": "Question 2",
       "description": "What is the opposite of 'hot'?",
-      "type": "radio",
+      "type": "",
       "defaultValue": "igiveup",
       "choices": [
         { "value": "igiveup", "label": "AI GIVE UP :(" },
