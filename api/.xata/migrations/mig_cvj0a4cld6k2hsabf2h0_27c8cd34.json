@@ -1,0 +1,18 @@
+{
+  "id": "mig_cvj0a4cld6k2hsabf2h0",
+  "parentID": "mig_cvj06scld6k2hsabf2g0",
+  "checksum": "1:27c8cd34b871c4693345c68043b41314910c47beb6c9c74435858d9e4b0dfbbf",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "author",
+          "type": "text",
+          "notNull": true,
+          "defaultValue": "Unknown User"
+        },
+        "table": "Users"
+      }
+    }
+  ]
+}

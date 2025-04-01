@@ -1,0 +1,13 @@
+{
+  "id": "mig_cvkvpsiglbhgau6ctbag",
+  "parentID": "mig_cvkvpr5fchh2dtob6sbg",
+  "checksum": "1:efbb30605ecf05dd585208ca072f7bd1bc44de8b45edb9e55cd2724a3b6b2bd4",
+  "operations": [
+    {
+      "removeColumn": {
+        "column": "tags",
+        "table": "Forms"
+      }
+    }
+  ]
+}

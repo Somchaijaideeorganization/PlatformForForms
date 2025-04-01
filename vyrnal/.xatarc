@@ -1,7 +1,6 @@
 {
   "databaseURL": "https://TaarnN-s-workspace-7vup51.us-east-1.xata.sh/db/VyrnalDB",
   "codegen": {
-    "output": "xata.js",
-    "moduleType": "esm"
+    "output": "src/utils/xata.ts"
   }
 }

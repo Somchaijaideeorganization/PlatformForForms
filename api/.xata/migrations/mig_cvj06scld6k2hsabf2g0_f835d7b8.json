@@ -1,0 +1,13 @@
+{
+  "id": "mig_cvj06scld6k2hsabf2g0",
+  "parentID": "mig_cvj06p2glbhgau6csssg",
+  "checksum": "1:f835d7b82bdf97edd7c8b4ae914df30d748511c9a9af2832b40f457ae061a849",
+  "operations": [
+    {
+      "renameTable": {
+        "newName": "Forms",
+        "oldName": "forms"
+      }
+    }
+  ]
+}

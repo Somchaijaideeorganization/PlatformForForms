@@ -1,0 +1,13 @@
+{
+  "id": "mig_cvkvpr5fchh2dtob6sbg",
+  "parentID": "mig_cvkg9kqglbhgau6ct6sg",
+  "checksum": "1:470f8853667aaf3a00be99257e6f95791c99b890ba7023d5e0069b8698711077",
+  "operations": [
+    {
+      "removeColumn": {
+        "column": "author",
+        "table": "Forms"
+      }
+    }
+  ]
+}

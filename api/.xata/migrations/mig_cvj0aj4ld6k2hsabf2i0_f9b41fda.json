@@ -1,0 +1,18 @@
+{
+  "id": "mig_cvj0aj4ld6k2hsabf2i0",
+  "parentID": "mig_cvj0a4cld6k2hsabf2h0",
+  "checksum": "1:f9b41fda4bc014526e85e928b00c7b93aa8cecbc2f44e6c0f3d6850b320f40e7",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "sub",
+          "type": "text",
+          "notNull": true,
+          "defaultValue": "000000000000000000000"
+        },
+        "table": "Users"
+      }
+    }
+  ]
+}
