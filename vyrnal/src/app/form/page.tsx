@@ -4,9 +4,9 @@ import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import "@/app/globals.css";
 
-import { ThemeSwitcher } from "../../components/theme-switcher";
-import AIModal from "../../components/ai-chat";
-import { getSectionElements } from "../../components/QuestionInterpreter";
+import { ThemeToggle } from "../../components/theme-toggle";
+import AIModal from "../../components/form/ai-chat";
+import { getFormBody, getFormHeader } from "../../components/form/renderer";
 import { Form } from "@/data/type";
 
 function FormPage() {
@@ -57,9 +57,12 @@ function FormPage() {
 
   return (
     <main className="h-[200vh]">
-      <ThemeSwitcher />
+      <div className="fixed top-6 right-6">
+        <ThemeToggle />
+      </div>
       <AIModal />
-      {getSectionElements(formData)}
+      {getFormHeader(formData)}
+      {getFormBody(formData)}
     </main>
   );
 }

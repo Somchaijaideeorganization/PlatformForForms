@@ -19,6 +19,43 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/home",
+        destination: "/",
+        permanent: true,
+      },
+    ];
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "www.google.com",
+        port: "",
+        pathname: "/favicon.ico",
+      },
+      {
+        protocol: "https",
+        hostname: "www.microsoft.com",
+        port: "",
+        pathname: "/favicon.ico",
+      },
+      {
+        protocol: "https",
+        hostname: "www.twitter.com",
+        port: "",
+        pathname: "/favicon.ico",
+      },
+      {
+        protocol: "https",
+        hostname: "www.facebook.com",
+        port: "",
+        pathname: "/favicon.ico",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
