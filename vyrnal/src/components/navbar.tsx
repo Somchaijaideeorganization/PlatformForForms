@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/sheet";
 
 import { useRouter } from "next/navigation";
+import Logo from "./Logo";
 
 const Divider = () => (
   <Separator className="w-px h-8 bg-muted-foreground/20 md:block" />
@@ -81,11 +82,7 @@ const NavBar = ({
             </SheetContent>
           </Sheet>
 
-          <Link href="/">
-            <p className="text-primary font-extrabold text-xl md:text-2xl">
-              Vyrnal
-            </p>
-          </Link>
+          <Logo />
           <Divider />
         </div>
 
@@ -139,7 +136,7 @@ const NavBar = ({
             <LogIn className="ml-2" />
           </Button>
           <Button
-            variant="outline"
+            variant="secondary"
             size="icon"
             className="rounded-full"
             onClick={() => router.push("/signin")}

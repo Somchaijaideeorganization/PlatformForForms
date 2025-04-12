@@ -4,122 +4,271 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+
+import "@/app/globals.css";
+import { Layout } from "@/components/auth/Layout";
+import { FormInput } from "@/components/auth/FormInput";
+import { AlertCircle, Mail, User, Lock } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { setAuthCookie } from "@/utils/cookies";
 
 export default function SignupPage() {
   const router = useRouter();
+  const { toast } = useToast();
+
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const handleSignup = async () => {
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [termsError, setTermsError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const validateName = (name: string) => {
+    if (!name) {
+      setNameError("Name is required");
+      return false;
+    }
+    setNameError("");
+    return true;
+  };
+
+  const validateEmail = (email: string) => {
+    if (!email) {
+      setEmailError("Email is required");
+      return false;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError("Please enter a valid email address");
+      return false;
+    }
+
+    setEmailError("");
+    return true;
+  };
+
+  const validatePassword = (password: string) => {
+    if (!password) {
+      setPasswordError("Password is required");
+      return false;
+    }
+
+    if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      return false;
+    }
+
+    setPasswordError("");
+    return true;
+  };
+
+  const validateConfirmPassword = (confirmPassword: string) => {
+    if (!confirmPassword) {
+      setConfirmPasswordError("Please confirm your password");
+      return false;
+    }
+
+    if (confirmPassword !== password) {
+      setConfirmPasswordError("Passwords do not match");
+      return false;
+    }
+
+    setConfirmPasswordError("");
+    return true;
+  };
+
+  const validateTerms = (agreed: boolean) => {
+    if (!agreed) {
+      setTermsError("You must agree to the terms and conditions");
+      return false;
+    }
+
+    setTermsError("");
+    return true;
+  };
+
+  const handleSignup = async () => {
+    const isNameValid = validateName(name);
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+    const isConfirmPasswordValid = validateConfirmPassword(confirmPassword);
+    const isTermsValid = validateTerms(agreedToTerms);
+
+    if (
+      !isNameValid ||
+      !isEmailValid ||
+      !isPasswordValid ||
+      !isConfirmPasswordValid ||
+      !isTermsValid
+    ) {
+      return;
+    }
+    setIsLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
+      const user = userCredential.user;
 
-      await setDoc(doc(db, "users", userCredential.user.uid), {
-        uid: userCredential.user.uid,
-        email: userCredential.user.email,
+      const token = await user.getIdToken();
+      setAuthCookie(token);
+
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: user.email,
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),
         provider: "password",
       });
-
+      console.log("Signup complete");
       router.push("/dashboard");
     } catch (e) {
       if (e instanceof Error) {
-        setError(e.message);
+        toast({
+          title: "Sign up failed",
+          description: e.message,
+          variant: "destructive",
+        });
       } else {
-        setError("See in console");
         console.error(e);
+        toast({
+          title: "Sign up failed",
+          description: "See message in console",
+          variant: "destructive",
+        });
       }
     }
+    setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Create Account</CardTitle>
-        </CardHeader>
+    <Layout
+      title="Create your account"
+      subtitle="Get started with a free account"
+    >
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSignup();
+        }}
+        className="space-y-4"
+      >
+        <FormInput
+          id="name"
+          label="Full name"
+          type="text"
+          placeholder="John Doe"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          error={nameError}
+          autoComplete="name"
+          required
+          icon={<User size={18} />}
+        />
 
-        <CardContent className="grid gap-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
+        <FormInput
+          id="email"
+          label="Email"
+          type="email"
+          placeholder="name@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={emailError}
+          autoComplete="email"
+          required
+          icon={<Mail size={18} />}
+        />
+
+        <FormInput
+          id="password"
+          label="Password"
+          type="password"
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={passwordError}
+          autoComplete="new-password"
+          required
+          icon={<Lock size={18} />}
+        />
+
+        <FormInput
+          id="confirm-password"
+          label="Confirm password"
+          type="password"
+          placeholder="••••••••"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          error={confirmPasswordError}
+          autoComplete="new-password"
+          required
+          icon={<Lock size={18} />}
+        />
+
+        <div className="space-y-2">
+          <div className="flex items-start">
+            <Checkbox
+              id="terms"
+              checked={agreedToTerms}
+              onCheckedChange={(checked: never) => {
+                setAgreedToTerms(checked as boolean);
+                if (checked) setTermsError("");
+              }}
+              className="mt-1"
+            />
+            <Label htmlFor="terms" className="ml-2 text-sm text-slate-700 dark:text-white">
+              I agree to the{" "}
+              <a href="#" className="text-indigo-600 hover:text-indigo-500">
+                terms of service
+              </a>{" "}
+              and{" "}
+              <a href="#" className="text-indigo-600 hover:text-indigo-500">
+                privacy policy
+              </a>
+            </Label>
+          </div>
+
+          {termsError && (
+            <div className="flex items-center text-sm text-red-500">
+              <AlertCircle size={14} className="mr-1" />
+              {termsError}
+            </div>
           )}
+        </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+        <Button
+          type="submit"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md transition-colors"
+          disabled={isLoading}
+        >
+          {isLoading ? "Creating account..." : "Create account"}
+        </Button>
+      </form>
 
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="confirm-password">Confirm Password</Label>
-            <Input
-              id="confirm-password"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-          </div>
-
-          <Button onClick={handleSignup} className="w-full">
-            Create Account
-          </Button>
-        </CardContent>
-
-        <CardFooter className="flex justify-center">
-          <div className="text-sm text-muted-foreground">
-            Already have an account?
-            <Link
-              href="/signin"
-              className="font-medium text-primary underline-offset-4 hover:underline ml-2"
-            >
-              Sign in
-            </Link>
-          </div>
-        </CardFooter>
-      </Card>
-    </div>
+      <div className="mt-6 text-center text-sm text-slate-600 dark:text-white">
+        Already have an account?
+        <Link
+          href="/signin"
+          className="font-medium text-indigo-600 hover:text-indigo-500 ml-2"
+        >
+          Sign in
+        </Link>
+      </div>
+    </Layout>
   );
 }

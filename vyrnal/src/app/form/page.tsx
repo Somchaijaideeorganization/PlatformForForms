@@ -8,6 +8,7 @@ import { ThemeToggle } from "../../components/theme-toggle";
 import AIModal from "../../components/form/ai-chat";
 import { getFormBody, getFormHeader } from "../../components/form/renderer";
 import { Form } from "@/data/type";
+import Loading from "@/components/Loading";
 
 function FormPage() {
   const [formData, setFormData] = useState<Form>(null);
@@ -35,25 +36,7 @@ function FormPage() {
       </div>
     );
 
-  if (!formData)
-    return (
-      <div className="h-screen flex justify-center items-center">
-        <div className="flex items-center justify-center">
-          <span
-            className="inline-block animate-spin text-3xl"
-            style={{
-              animationDuration: "1.5s",
-              animationTimingFunction: "linear",
-              animationIterationCount: "infinite",
-            }}
-            role="status"
-            aria-label="Loading"
-          >
-            😀
-          </span>
-        </div>
-      </div>
-    );
+  if (!formData) return <Loading />;
 
   return (
     <main className="h-[200vh]">
@@ -69,26 +52,7 @@ function FormPage() {
 
 export default function Page() {
   return (
-    <Suspense
-      fallback={
-        <div className="h-screen flex justify-center items-center">
-          <div className="flex items-center justify-center">
-            <span
-              className="inline-block animate-spin text-3xl"
-              style={{
-                animationDuration: "1.5s",
-                animationTimingFunction: "linear",
-                animationIterationCount: "infinite",
-              }}
-              role="status"
-              aria-label="Loading"
-            >
-              😀
-            </span>
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<Loading />}>
       <FormPage />
     </Suspense>
   );

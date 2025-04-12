@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/provider/AuthProvider";
 
 export const metadata: Metadata = {
   title: "Vyrnal",
@@ -65,9 +69,15 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              {children}
+            </TooltipProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

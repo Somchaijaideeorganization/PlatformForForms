@@ -7,16 +7,15 @@ import {
   OAuthProvider,
   TwitterAuthProvider,
 } from "firebase/auth";
-import {
-  initializeFirestore,
-} from "firebase/firestore";
+import { initializeFirestore } from "firebase/firestore";
 
-// ✅ ตรวจสอบว่า env ถูกโหลดจริง
+// ตรวจสอบว่า env มีค่าแล้วหรือไม่
 if (
   !process.env.NEXT_PUBLIC_API_KEY ||
-  !process.env.NEXT_PUBLIC_PROJECT_ID
+  !process.env.NEXT_PUBLIC_PROJECT_ID ||
+  !process.env.NEXT_PUBLIC_AUTH_DOMAIN
 ) {
-  throw new Error("Missing Firebase environment variables");
+  throw new Error("Missing required Firebase environment variables.");
 }
 
 const firebaseConfig = {
@@ -28,21 +27,15 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_APP_ID!,
 };
 
-// ✅ สร้าง app แค่ครั้งเดียว
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-// ✅ ใช้ initializeFirestore + forceLongPolling
-const db = initializeFirestore(app, {
-  experimentalForceLongPolling: true,
+export const auth = getAuth(app);
+export const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,  // บังคับ long polling ถ้ามีปัญหาเชื่อมต่อ
 });
 
-
-
-const auth = getAuth(app);
-
-const googleProvider = new GoogleAuthProvider();
-const facebookProvider = new FacebookAuthProvider();
-const microsoftProvider = new OAuthProvider("microsoft.com");
-const twitterProvider = new TwitterAuthProvider();
-
-export { app, db, auth, googleProvider, facebookProvider, microsoftProvider, twitterProvider };
+// Providers สำหรับ OAuth ต่าง ๆ
+export const googleProvider = new GoogleAuthProvider();
+export const facebookProvider = new FacebookAuthProvider();
+export const microsoftProvider = new OAuthProvider("microsoft.com");
+export const twitterProvider = new TwitterAuthProvider();
