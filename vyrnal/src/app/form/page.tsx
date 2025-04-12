@@ -4,10 +4,11 @@ import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import "@/app/globals.css";
 
-import { ThemeSwitcher } from "../../components/theme-switcher";
-import AIModal from "../../components/ai-chat";
-import { getSectionElements } from "../../components/QuestionInterpreter";
+import { ThemeToggle } from "../../components/theme-toggle";
+import AIModal from "../../components/form/ai-chat";
+import { getFormBody, getFormHeader } from "../../components/form/renderer";
 import { Form } from "@/data/type";
+import Loading from "@/components/Loading";
 
 function FormPage() {
   const [formData, setFormData] = useState<Form>(null);
@@ -35,57 +36,23 @@ function FormPage() {
       </div>
     );
 
-  if (!formData)
-    return (
-      <div className="h-screen flex justify-center items-center">
-        <div className="flex items-center justify-center">
-          <span
-            className="inline-block animate-spin text-3xl"
-            style={{
-              animationDuration: "1.5s",
-              animationTimingFunction: "linear",
-              animationIterationCount: "infinite",
-            }}
-            role="status"
-            aria-label="Loading"
-          >
-            😀
-          </span>
-        </div>
-      </div>
-    );
+  if (!formData) return <Loading />;
 
   return (
     <main className="h-[200vh]">
-      <ThemeSwitcher />
+      <div className="fixed top-6 right-6">
+        <ThemeToggle />
+      </div>
       <AIModal />
-      {getSectionElements(formData)}
+      {getFormHeader(formData)}
+      {getFormBody(formData)}
     </main>
   );
 }
 
 export default function Page() {
   return (
-    <Suspense
-      fallback={
-        <div className="h-screen flex justify-center items-center">
-          <div className="flex items-center justify-center">
-            <span
-              className="inline-block animate-spin text-3xl"
-              style={{
-                animationDuration: "1.5s",
-                animationTimingFunction: "linear",
-                animationIterationCount: "infinite",
-              }}
-              role="status"
-              aria-label="Loading"
-            >
-              😀
-            </span>
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<Loading />}>
       <FormPage />
     </Suspense>
   );

@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { HeroUIProvider } from "@heroui/react";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/provider/AuthProvider";
 
 export const metadata: Metadata = {
   title: "Vyrnal",
@@ -37,12 +41,6 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
-  // twitter: {
-  //   title: "Vyrnal",
-  //   description:
-  //     "Collaborate, Contribute, and Capture to the World of Research",
-  //   images: ["/public/twitter-image.jpg"],
-  // },
   icons: {
     icon: "/public/favicon.png",
     shortcut: "/public/shortcut-icon.png",
@@ -56,9 +54,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.classList.add(theme);
+                document.documentElement.style.colorScheme = theme;
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body className="antialiased">
-        <HeroUIProvider>{children}</HeroUIProvider>
+        <AuthProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              {children}
+            </TooltipProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
